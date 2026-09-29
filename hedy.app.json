@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 2,
+  "name": "DropRadar",
+  "projectSlug": "dropradar",
+  "sourceVersion": "V2",
+  "capabilities": {
+    "auth": false,
+    "push": false,
+    "realtime": false,
+    "askAi": {
+      "enabled": true,
+      "allowedModels": [],
+      "allowStreaming": true,
+      "allowImages": true
+    },
+    "localMachineAgentServices": []
+  },
+  "requiredSecrets": [],
+  "environment": [],
+  "dataCollections": [],
+  "runtimeWritablePaths": [],
+  "routes": [],
+  "files": [
+    {
+      "path": "/index.html",
+      "sourcePath": "static/index.html",
+      "contentType": "text/html",
+      "sizeBytes": 1382,
+      "sha256": "72024e372d92533d09dae11e567ed65fb44425f8948a390a8c43102ac23ff571",
+      "visibility": "Public",
+      "cachePolicy": "ShortLived"
+    },
+    {
+      "path": "/styles.css",
+      "sourcePath": "static/styles.css",
+      "contentType": "text/css",
+      "sizeBytes": 1831,
+      "sha256": "3dfa7e2adc52673f86678c1bbb4161fa1a2375c612d8d087a31374c90e54f45d",
+      "visibility": "Public",
+      "cachePolicy": "Immutable"
+    }
+  ],
+  "modules": [],
+  "functions": [],
+  "schedules": [],
+  "inboundWebhooks": []
+}
