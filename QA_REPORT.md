@@ -328,3 +328,52 @@ Local result: `npm test` **PASS 37/37**. Authenticated execution remains pending
 ### Independent OIDC adversarial review
 
 A non-implementing QA agent reviewed the completed authentication remediation and returned **PASS**, with no open Critical, High, or Medium findings. In addition to the repository suite, the reviewer independently omitted each required OIDC setting, verified each attempt failed closed with exit status 4, confirmed the GitHub request token was absent from output, and observed `HEDY_TOKEN` unset during both login and sync. The mock CLI recorded the exact CI login before the exact dev sync, while a failed login produced no sync invocation. The reviewer also confirmed that the workflow remains manual, least-privileged, protected by the `dev` environment, and incapable of targeting staging or production.
+
+
+---
+
+## Main-project Discord end-to-end validation — 2026-09-30
+
+### Candidate and environment
+- Git source commit: `4fb8b9d01bedd547004fed689a3861d3a6507e77`.
+- Exact immutable full candidate preserved in main DropRadar: `apprev_1790782743529_189bbfa11b2b45a99d7248e57d04df36`.
+- Environment: Hedy `dev`; staging and production were not modified.
+
+### Discord interaction acceptance
+- Discord Developer Portal verified the Hedy dev `/api/discord` endpoint.
+- Real signed commands `/watch`, `/value`, and `/unwatch` all returned 200 through the deployed Discord handler.
+- `/watch 151 Elite Trainer Box` created the expected Hedy watch row.
+- `/value 151 Elite Trainer Box` returned the expected empty-source response.
+- `/unwatch 151 Elite Trainer Box` removed the persisted watch row.
+- Unsigned requests continue to fail closed with 401 `invalid_signature`.
+
+### Alert-generation and delivery acceptance
+A dev-only observation explicitly labeled `synthetic_validation` was inserted solely to exercise the deployed worker. It was not represented as live Best Buy data.
+
+- Collector schedule persisted one normalized observation, one alert, and one pending delivery.
+- The first manually triggered `deliver-alerts` schedule run became wedged in the Hedy run ledger and did not produce function logs; it was force-stopped.
+- The delivery function was then exercised directly and returned `claimed=1 sent=1 failed=0`.
+- A second synthetic price-change alert was generated and a **fresh scheduled** `deliver-alerts` run completed successfully in 862 ms with `claimed=1 sent=1 failed=0`.
+- Discord's API was queried afterward and returned both DropRadar bot messages in the actual DM channel, proving external delivery rather than merely local status mutation.
+
+The initial wedged run was not reproducible after force-stop. No delivery-code defect was identified from the reproduced path; the fresh scheduled run passed normally.
+
+### Cleanup and post-conditions
+- Both synthetic authorized import rows were deleted.
+- Both derived observation rows, current state, alert events, and alert delivery rows were deleted.
+- The temporary validation watch was deleted so the user's prior `/unwatch` state is preserved.
+- Synthetic Best Buy source-health state was deleted.
+- `GET /api/products/sv151-etb` returned `current: []` and `history: []` after cleanup.
+- Both dev schedules were disabled after testing.
+- The temporary diagnostic route was returned to an inert 404 response.
+
+### Disposition
+- Main dev UI/API runtime: **PASS**.
+- Discord endpoint verification: **PASS**.
+- Discord command persistence/query/removal: **PASS**.
+- Alert generation: **PASS**.
+- Scheduled alert delivery: **PASS on fresh run**.
+- Actual Discord message existence: **PASS**.
+- Synthetic cleanup: **PASS**.
+- Staging E2E: **NOT YET RUN**.
+- Production: **UNTOUCHED**.
