@@ -1,0 +1,17 @@
+{
+  "name": "dropradar",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "collect": "node src/collect.js",
+    "test": "node --test",
+    "check": "npm run check:hedy && find src hedy test test-support scripts -type f \\( -name '*.js' -o -name '*.cjs' \\) -print0 | xargs -0 -n1 node --check",
+    "build:hedy": "node scripts/build-hedy-manifest.js",
+    "check:hedy": "node scripts/build-hedy-manifest.js --check"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

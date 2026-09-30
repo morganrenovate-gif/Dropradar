@@ -3,7 +3,23 @@
 This file is the batching point for actions that truly require the founder.
 
 ## Open
-None.
+
+### DISCORD-CREDENTIALS-001
+Action: Create or designate the DropRadar Discord application, accept Discord's developer terms if required, and provision its public key/bot credential through Hedy secret storage.
+
+Reason founder-only: application ownership, terms acceptance, and credentials cannot be fabricated or committed by the build agent.
+
+Needed after: the unsigned-request rejection and command behavior are locally verified; deployed Discord receipt and delivery require the real application identity.
+
+### SOURCE-CREDENTIALS-001
+Action: If live eBay or Best Buy data is desired for founder review, create authorized provider applications and provision credentials through Hedy secret storage. Alternatively, supply exports obtained under an authorized account for the documented import paths.
+
+Reason founder-only: provider account ownership, terms acceptance, and credential creation.
+
+### HEDY-CONNECTION-001
+Action: Restore an authenticated Hedy control-plane connection for this coding environment, or have an authorized operator promote the reviewed immutable Git revision to dev and then staging.
+
+Reason founder-only: this environment has no Hedy CLI/control-plane credential and its outbound CONNECT proxy rejects the documented Hedy hosts. No production action is requested.
 
 Do not add routine product, architecture, debugging, framework, schema, staging, or reversible implementation decisions here.
 
