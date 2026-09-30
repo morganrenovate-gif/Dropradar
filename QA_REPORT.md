@@ -236,3 +236,78 @@ This review establishes local readiness to submit the manifest for authenticated
 ### Evidence boundary
 
 The exact Git artifact is ready to submit to authenticated `hedy_app_sync(dryRun=true)`. This QA pass is not control-plane acceptance. Dry-run success, dev deployment, runtime behavior, staging promotion, browser smoke tests, and rollback/restore remain pending. Production was not touched.
+
+---
+
+## Authenticated dry-run and isolated Hedy runtime evidence — 2026-09-30
+
+### Exact-head control-plane validation
+
+Authenticated validation used exact PR head `66fca2dab0a40524429cb0ee6822a8eec463e5e1` and the checked-in self-contained `hedy.app.json`:
+
+- `hedy_app_sync(dryRun=true)`: **PASS / Planned**;
+- warnings: `[]`;
+- errors: `[]`;
+- filesAdded: 1;
+- filesChanged: 2;
+- routesChanged: 4;
+- bytesToUpload: 6086;
+- immutable revision stored, not deployed: `apprev_1790776598176_eb2c57b55ba548e8837560b6408d9649`.
+
+A direct revision deployment probe safely refused before applying records because static file bytes were not present in Hedy's content-addressed object store. This validated the need for the documented CLI flow, which stages file bytes before revision sync. It was a deployment-pipeline gap, not a manifest/schema failure.
+
+### Isolated non-production runtime sandbox
+
+A separate validation project deployed a credential-free core profile from the same Git head. Main DropRadar dev, staging, and production were unchanged.
+
+- revision: `apprev_1790777237832_26134c032bfc43958b7d8b537978eebb`;
+- deployment: `appdep_1790777238993_6cbf9ac66ea04121bdacd2fad04bcc31`;
+- `GET /`, `/api/health`, `/api/products?q=151`, `/api/products/sv151-etb`: **PASS / 200**;
+- the search response contained the two expected 151 products;
+- recurring collection schedule instantiated and a real manual run succeeded in 625 ms;
+- empty provider lanes persisted as `UNCONFIGURED` and logs recorded `collection_complete`;
+- a sandbox-only `synthetic_validation` observation persisted through real Hedy `ctx.data`, produced current/history state, and emitted one deterministic alert;
+- exact replay produced zero additional observations and alerts;
+- an older observation appended to history without regressing current or adding an alert;
+- product detail retained current IN_STOCK $49.99 and older OUT_OF_STOCK $10.00 history;
+- `alert_events` remained at one;
+- the validation schedule was disabled after the test.
+
+The Discord route and delivery worker were deliberately omitted because founder-owned Discord credentials are not provisioned. Synthetic validation data was isolated and explicitly labeled.
+
+### Repository deployment-path remediation
+
+The repository now includes a manual dev-only workflow and guarded wrapper for the official CLI. Tests verify that it:
+
+- refuses missing token/OIDC authentication;
+- requires an externally provisioned official Hedy CLI;
+- checks the deterministic self-contained manifest;
+- executes exactly `hedy app sync --environment dev`;
+- contains no staging or production sync target;
+- supports an environment-scoped `HEDY_TOKEN` or GitHub Actions OIDC.
+
+### Disposition
+
+- Exact-head Hedy schema/control-plane dry-run: **PASS**.
+- Isolated deployed core runtime and data-integrity behavior: **PASS**.
+- Repository dev-sync implementation: **LOCAL-PASS**, pending credentialed execution.
+- Main-project full dev candidate: **BLOCKED-EXTERNAL** on scoped Hedy dev authentication and founder-owned Discord credentials.
+- Staging E2E, rollback/restore, desktop/mobile smoke: **NOT RUN**.
+- Production: **UNTOUCHED**.
+
+### Independent repository dev-sync review
+
+A non-implementing QA pass reviewed the repository deployment path after remediation. Final disposition: **PASS**, with no open Critical, High, or Medium findings in scope.
+
+Verified evidence:
+
+- missing authentication exits 2;
+- authenticated execution without the official CLI exits 3;
+- the successful path invokes exactly `hedy app sync --environment dev`;
+- the wrapper contains no staging/production target or user-selectable environment;
+- the workflow is manual, targets protected environment `dev`, grants only `contents: read` plus `id-token: write`, and supports optional environment-scoped `HEDY_TOKEN` or OIDC;
+- tests/checks precede sync;
+- no credential value is committed;
+- `npm test` passes 34/34, `npm run check` passes, and `git diff --check` passes.
+
+Main-project execution remains correctly blocked on the founder-owned scoped credential/OIDC action and an externally provisioned official CLI runner. This local PASS does not claim main-dev deployment.

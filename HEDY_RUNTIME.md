@@ -37,20 +37,48 @@ The local `JsonStore` is a reference/test adapter only. It is absent from Hedy r
 
 ## Validation state
 
-Authenticated validation of the prior head found that raw function/module `sourcePath` entries were not deploy-time loaders and required embedded `code`. The same review established lowercase index identifiers, `kind: "recurring"`, `{items}` data envelopes, supported query options, per-function module declarations, and the absence of sandbox timers. An in-memory manually hydrated probe passed schema planning with no warnings/errors. The repository now reproduces that hydration deterministically, but the exact generated head has not yet received a new authenticated dry-run; acceptance remains **PENDING REVALIDATION**.
+Authenticated validation established embedded `code`, lowercase index identifiers, `kind: "recurring"`, `{items}` data envelopes, supported query options, per-function module declarations, and the absence of sandbox timers. Exact PR head `66fca2dab0a40524429cb0ee6822a8eec463e5e1` subsequently passed authenticated `hedy_app_sync(dryRun=true)` planning with warnings `[]` and errors `[]`. Manifest/schema acceptance is **PASS**; main-project dev deployment remains gated on CLI file staging and scoped authentication.
 
-`npm run check:hedy` fails if the checked-in deploy artifact differs from a fresh deterministic build. Local tests execute the sandbox scripts as `handler(ctx)` and mock the documented Hedy surfaces, including named `query` indexes and versioned conditional writes. Local tests cannot prove Hedy accepts the manifest. Discord Ed25519 verification is bundled as a pure-JavaScript CommonJS module and does not depend on an undocumented runtime crypto helper.
+`npm run check:hedy` fails if the checked-in deploy artifact differs from a fresh deterministic build. Local tests execute the sandbox scripts as `handler(ctx)` and mock the documented Hedy surfaces, including named `query` indexes and versioned conditional writes. Local tests alone cannot prove acceptance; the authenticated exact-head dry-run now supplies that evidence. Discord Ed25519 verification is bundled as a pure-JavaScript CommonJS module and does not depend on an undocumented runtime crypto helper.
 
 ## Dev and staging procedure
 
-1. Run `npm run check:hedy` and submit the checked-in self-contained `hedy.app.json`.
-2. Run authenticated `hedy_app_sync(dryRun=true)` against the exact reviewed Git commit and retain its response.
-3. Repair any remaining schema/runtime validation error before deployment.
-4. Build an immutable Hedy revision and deploy it to **dev** only.
-5. Confirm collection/index creation, then seed only authorized import records.
-6. Provision founder-owned Discord secrets through Hedy secret storage.
-7. Exercise health, product list/detail, unsigned Discord rejection, collection, delivery, source-failure isolation, and concurrent CAS behavior in dev; retain logs.
-8. Promote the exact passing revision from dev to staging without editing staging directly.
-9. Run desktop/mobile browser smoke tests and the full acceptance matrix.
-10. Test rollback to the previous revision and restoration of the candidate; retain revision and request evidence.
-11. Do not deploy or promote production without explicit founder authorization.
+1. Run `npm run check:hedy` against the checked-in self-contained `hedy.app.json`.
+2. Provision scoped dev authentication and execute `./scripts/sync-hedy-dev.sh`, which stages static bytes and invokes the official CLI for **dev only**.
+3. Retain the resulting immutable revision and deployment identifiers.
+4. Confirm collection/index creation, then seed only authorized import records.
+5. Provision founder-owned Discord secrets through Hedy secret storage.
+6. Exercise health, product list/detail, unsigned Discord rejection, collection, delivery, source-failure isolation, and concurrent CAS behavior in dev; retain logs.
+7. Promote the exact passing revision from dev to staging without editing staging directly.
+8. Run desktop/mobile browser smoke tests and the full acceptance matrix.
+9. Test rollback to the previous revision and restoration of the candidate; retain revision and request evidence.
+10. Do not deploy or promote production without explicit founder authorization.
+
+## Repository dev-sync path
+
+Static manifest metadata is insufficient for deployment because Hedy requires file bytes to be staged in its content-addressed object store. The supported path is the official CLI command:
+
+```bash
+./scripts/sync-hedy-dev.sh
+# validates the self-contained manifest, then executes exactly:
+# hedy app sync --environment dev
+```
+
+The wrapper deliberately hard-codes `dev`, fails without either `HEDY_TOKEN` or GitHub Actions OIDC request variables, fails when the official `hedy` CLI is absent, and never accepts a staging/production environment argument.
+
+The manual `.github/workflows/deploy-dev.yml` workflow:
+
+- is `workflow_dispatch` only;
+- has `contents: read` and `id-token: write` permissions;
+- targets the protected GitHub `dev` environment;
+- supports an environment-scoped `HEDY_TOKEN` or Hedy CI/OIDC authentication;
+- uses a self-hosted `linux` runner labeled `hedy`, on which the official CLI must be provisioned outside source control;
+- runs tests and manifest validation before the CLI stages files and syncs dev.
+
+Staging and production remain promote-only; this repository intentionally defines no direct sync workflow for either environment.
+
+## Authenticated validation evidence
+
+The exact PR head `66fca2dab0a40524429cb0ee6822a8eec463e5e1` passed authenticated Hedy dry-run planning with no warnings or errors. Revision `apprev_1790776598176_eb2c57b55ba548e8837560b6408d9649` was stored but not deployed. A direct revision deployment correctly refused because static bytes had not been pre-staged, which is why the repository now uses the CLI sync path.
+
+A separate, non-production validation project deployed a credential-free core profile from the same Git head. Its real Hedy runtime passed public routes, recurring schedule execution, durable current/history writes, replay deduplication, stale-observation handling, alert stability, health persistence, and runtime logging. Details and immutable IDs are recorded in `STATUS.md` and `QA_REPORT.md`. Main-project dev/staging/prod were not changed.

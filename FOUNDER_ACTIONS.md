@@ -16,10 +16,10 @@ Action: If live eBay or Best Buy data is desired for founder review, create auth
 
 Reason founder-only: provider account ownership, terms acceptance, and credential creation.
 
-### HEDY-CONNECTION-001
-Action: Restore an authenticated Hedy control-plane connection for this coding environment, or have an authorized operator promote the reviewed immutable Git revision to dev and then staging.
+### HEDY-DEV-CREDENTIAL-001
+Action: Provision either a least-privilege `HEDY_TOKEN` in the protected GitHub `dev` environment or approve/configure Hedy CI/OIDC trust. Ensure the selected self-hosted `linux` runner labeled `hedy` has the official Hedy CLI installed outside the repository.
 
-Reason founder-only: this environment has no Hedy CLI/control-plane credential and its outbound CONNECT proxy rejects the documented Hedy hosts. No production action is requested.
+Reason founder-only: issuing a project credential or establishing workload-identity trust requires control-plane ownership. The repository workflow and dev-only sync wrapper are complete and do not store credentials. No staging or production credential is requested.
 
 Do not add routine product, architecture, debugging, framework, schema, staging, or reversible implementation decisions here.
 
@@ -34,6 +34,9 @@ Future entries are allowed only for:
 - true requirement contradictions.
 
 ## Closed
+
+### HEDY-CONNECTION-001
+Result: Authenticated control-plane access validated exact PR head `66fca2d` successfully, created an undeployed immutable revision, and produced isolated sandbox runtime evidence. Repository deployment now waits only on the scoped main-dev credential/OIDC action above.
 
 ### HEDY-WORKSPACE-001
 Decision: PROJECTS team workspace.

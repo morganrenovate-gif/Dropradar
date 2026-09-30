@@ -199,3 +199,10 @@ confirmed: runtime/language and package strategy; Hedy collection and transactio
 semantics; route/function/schedule shape; authentication boundary; outbound-host
 allowlist mechanism; and revision/rollback procedure. These are reversible
 engineering decisions and are not founder questions.
+
+## 2026-09-30 evidence update
+
+- Exact PR head authenticated Hedy dry-run: PASS with no warnings/errors; immutable revision stored but not deployed.
+- Isolated non-production Hedy core runtime: PASS for static/API routes, schedule execution, real `ctx.data`, replay dedupe, stale history, health, and logs.
+- Repository now has deterministic self-contained manifest generation plus a manual, dev-only official CLI sync workflow that stages file bytes.
+- Remaining dependency is founder-owned credential/OIDC provisioning for main dev and Discord/provider identities; staging E2E and rollback follow a passing main-dev revision. Production remains out of scope.

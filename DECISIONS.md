@@ -53,3 +53,8 @@ The deployable application uses Hedy server functions, same-origin routes, sched
 Status: Accepted
 
 Maintain `hedy.app.source.json` as the reviewable source-path manifest and generate the deployable `hedy.app.json` with `npm run build:hedy`. The generated artifact embeds every function/module `code` payload and each function's explicit module dependencies. `npm run check:hedy` compares the committed artifact byte-for-byte with a fresh build so authenticated validation can submit the exact Git content without manual hydration.
+
+## D-011 — Official Hedy CLI for dev file staging and sync
+Status: Accepted
+
+Use the official `hedy app sync --environment dev` path for main-project dev deployment because it stages static file bytes in Hedy's content-addressed object store before revision sync. The repository wrapper and manual GitHub workflow are dev-only. Authentication is supplied outside source through a scoped `HEDY_TOKEN` or Hedy CI/OIDC; staging and production remain promotion-only.
