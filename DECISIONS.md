@@ -57,4 +57,4 @@ Maintain `hedy.app.source.json` as the reviewable source-path manifest and gener
 ## D-011 — Official Hedy CLI for dev file staging and sync
 Status: Accepted
 
-Use the official `hedy app sync --environment dev` path for main-project dev deployment because it stages static file bytes in Hedy's content-addressed object store before revision sync. The repository wrapper and manual GitHub workflow are dev-only. Authentication is supplied outside source through a scoped `HEDY_TOKEN` or Hedy CI/OIDC; staging and production remain promotion-only.
+Use the official `hedy app sync --environment dev` path for main-project dev deployment because it stages static file bytes in Hedy's content-addressed object store before revision sync. The repository wrapper and manual GitHub workflow are dev-only. Authentication is supplied outside source through a scoped `HEDY_TOKEN` or an explicit `hedy login --ci` using company, CI trust policy, and audience configuration; staging and production remain promotion-only.

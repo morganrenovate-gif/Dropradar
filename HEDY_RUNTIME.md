@@ -64,14 +64,14 @@ Static manifest metadata is insufficient for deployment because Hedy requires fi
 # hedy app sync --environment dev
 ```
 
-The wrapper deliberately hard-codes `dev`, fails without either `HEDY_TOKEN` or GitHub Actions OIDC request variables, fails when the official `hedy` CLI is absent, and never accepts a staging/production environment argument.
+The wrapper deliberately hard-codes `dev` and never accepts a staging/production environment argument. With a non-empty scoped `HEDY_TOKEN`, it syncs directly. Otherwise it requires GitHub OIDC request variables plus non-secret `HEDY_COMPANY_ID`, `HEDY_CI_TRUST_ID`, and `HEDY_OIDC_AUDIENCE`; it unsets `HEDY_TOKEN`, runs `hedy login --ci --company ... --policy ... --audience ...`, and syncs only after successful login. Missing configuration, failed login, and a missing official CLI all fail closed without echoing credential material.
 
 The manual `.github/workflows/deploy-dev.yml` workflow:
 
 - is `workflow_dispatch` only;
 - has `contents: read` and `id-token: write` permissions;
 - targets the protected GitHub `dev` environment;
-- supports an environment-scoped `HEDY_TOKEN` or Hedy CI/OIDC authentication;
+- supports an environment-scoped `HEDY_TOKEN` or Hedy CI/OIDC authentication configured by the three non-secret GitHub environment variables;
 - uses a self-hosted `linux` runner labeled `hedy`, on which the official CLI must be provisioned outside source control;
 - runs tests and manifest validation before the CLI stages files and syncs dev.
 

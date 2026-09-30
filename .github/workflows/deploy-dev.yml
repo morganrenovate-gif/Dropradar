@@ -18,6 +18,9 @@ jobs:
     runs-on: [self-hosted, linux, hedy]
     env:
       HEDY_TOKEN: ${{ secrets.HEDY_TOKEN }}
+      HEDY_COMPANY_ID: ${{ vars.HEDY_COMPANY_ID }}
+      HEDY_CI_TRUST_ID: ${{ vars.HEDY_CI_TRUST_ID }}
+      HEDY_OIDC_AUDIENCE: ${{ vars.HEDY_OIDC_AUDIENCE }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

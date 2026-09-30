@@ -12,7 +12,7 @@ Provision a scoped Hedy dev credential or Hedy CI/OIDC trust for the repository'
 - The manifest declares eight durable collections, six functions, four same-origin routes, two recurring schedules, explicit function-module bindings, required Discord secrets, and the Discord outbound allowlist. It declares no writable file persistence.
 - Collection and delivery use documented Hedy envelopes/queries and versioned compare-and-set writes with deterministic observation, alert, watch, and delivery identities.
 - `.github/workflows/deploy-dev.yml` is manual and dev-only, requests GitHub OIDC, accepts an optional scoped `HEDY_TOKEN`, and runs on a Hedy CLI-equipped runner.
-- `scripts/sync-hedy-dev.sh` fails closed without Hedy authentication or the official CLI, validates the generated manifest, and invokes exactly `hedy app sync --environment dev`; no staging or production sync path exists.
+- `scripts/sync-hedy-dev.sh` preserves the scoped token path; otherwise it requires company/policy/audience configuration and successfully runs `hedy login --ci` before sync. It fails closed on incomplete OIDC configuration, failed login, or missing CLI, validates the generated manifest, and invokes exactly `hedy app sync --environment dev`; no staging or production sync path exists.
 - The local JSON store remains reference/test-only and is not Hedy persistence.
 
 ## Authenticated Hedy evidence
@@ -39,7 +39,7 @@ The sandbox deliberately omitted Discord route/delivery because founder-owned Di
 
 ## Current verification
 
-- `npm test`: 34/34 PASS after adding dev-sync controls.
+- `npm test`: 37/37 PASS after completing token/OIDC dev-sync controls.
 - `npm run build:hedy`: PASS and deterministic.
 - `npm run check:hedy`: PASS.
 - `npm run check`: PASS.
@@ -49,7 +49,7 @@ The sandbox deliberately omitted Discord route/delivery because founder-owned Di
 
 ## Remaining gates
 
-1. **Founder-only credential action:** provision scoped `HEDY_TOKEN` in the GitHub `dev` environment or configure Hedy CI/OIDC trust; ensure the selected self-hosted runner has the official Hedy CLI.
+1. **Founder-only credential action:** provision scoped `HEDY_TOKEN` in the GitHub `dev` environment, or configure Hedy CI/OIDC trust plus non-secret `HEDY_COMPANY_ID`, `HEDY_CI_TRUST_ID`, and `HEDY_OIDC_AUDIENCE` variables; ensure the selected self-hosted runner has the official Hedy CLI.
 2. Run the manual `Deploy Hedy Dev` workflow, which stages static bytes before syncing dev.
 3. Provision founder-owned Discord credentials and execute full main-dev Discord/provider acceptance.
 4. Promote the same passing immutable revision to staging; run desktop/mobile smoke and full E2E.

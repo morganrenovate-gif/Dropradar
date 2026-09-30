@@ -17,7 +17,7 @@ Action: If live eBay or Best Buy data is desired for founder review, create auth
 Reason founder-only: provider account ownership, terms acceptance, and credential creation.
 
 ### HEDY-DEV-CREDENTIAL-001
-Action: Provision either a least-privilege `HEDY_TOKEN` in the protected GitHub `dev` environment or approve/configure Hedy CI/OIDC trust. Ensure the selected self-hosted `linux` runner labeled `hedy` has the official Hedy CLI installed outside the repository.
+Action: Provision either a least-privilege `HEDY_TOKEN` in the protected GitHub `dev` environment or approve/configure Hedy CI/OIDC trust and set non-secret dev-environment variables `HEDY_COMPANY_ID`, `HEDY_CI_TRUST_ID`, and `HEDY_OIDC_AUDIENCE`. Ensure the selected self-hosted `linux` runner labeled `hedy` has the official Hedy CLI installed outside the repository.
 
 Reason founder-only: issuing a project credential or establishing workload-identity trust requires control-plane ownership. The repository workflow and dev-only sync wrapper are complete and do not store credentials. No staging or production credential is requested.
 

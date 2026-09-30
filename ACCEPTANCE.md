@@ -99,7 +99,7 @@ Status terms: **LOCAL-PASS** means automated implementation evidence exists but 
 - Critical/High finding closure and independent local QA: **LOCAL-PASS**; exact-head authenticated dry-run and isolated core runtime: **PASS**; full main-dev/staging adversarial QA remains pending (`QA_REPORT.md`).
 
 ### Operations
-- Unit/integration/CAS/concurrent-process/deployment-guard tests: **LOCAL-PASS** (34/34 tests). GitHub Actions push and pull-request checks are PASS for dev-sync implementation commit `af9dea8`.
+- Unit/integration/CAS/concurrent-process/deployment-guard tests: **LOCAL-PASS** (37/37 tests). GitHub Actions push and pull-request checks are PASS for dev-sync implementation commit `af9dea8`; OIDC correction follow-up CI runs after push.
 - Hedy sandbox logs/runtime: **PASS**. Main dev file staging/sync, dev-to-staging promotion, staging E2E, rollback/restore, and deployed adversarial QA remain **BLOCKED-EXTERNAL** pending scoped Hedy dev authentication and Discord credentials.
 
 ### Current release gate

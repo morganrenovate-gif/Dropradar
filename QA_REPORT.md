@@ -311,3 +311,20 @@ Verified evidence:
 - `npm test` passes 34/34, `npm run check` passes, and `git diff --check` passes.
 
 Main-project execution remains correctly blocked on the founder-owned scoped credential/OIDC action and an externally provisioned official CLI runner. This local PASS does not claim main-dev deployment.
+
+---
+
+## Hedy CI/OIDC authentication remediation — 2026-09-30
+
+The authenticated review found that merely exposing GitHub OIDC request variables did not establish a Hedy CLI session. The dev-sync wrapper now has two explicit, mutually exclusive paths:
+
+1. a non-empty, environment-scoped `HEDY_TOKEN` proceeds to the validated dev sync without logging in; or
+2. the OIDC path requires GitHub OIDC request variables plus non-secret company id, CI trust policy id, and audience, unsets `HEDY_TOKEN`, executes the authoritative `hedy login --ci --company ... --policy ... --audience ...`, and proceeds to dev sync only after successful login.
+
+Regression coverage verifies missing authentication, missing CLI, incomplete OIDC configuration, exact login-before-sync ordering and arguments, failed-login suppression of sync, the preserved token path, workflow variable wiring, and the absence of staging/production targets or credential values.
+
+Local result: `npm test` **PASS 37/37**. Authenticated execution remains pending founder provisioning of either the scoped token or CI trust/configuration. Production remains untouched.
+
+### Independent OIDC adversarial review
+
+A non-implementing QA agent reviewed the completed authentication remediation and returned **PASS**, with no open Critical, High, or Medium findings. In addition to the repository suite, the reviewer independently omitted each required OIDC setting, verified each attempt failed closed with exit status 4, confirmed the GitHub request token was absent from output, and observed `HEDY_TOKEN` unset during both login and sync. The mock CLI recorded the exact CI login before the exact dev sync, while a failed login produced no sync invocation. The reviewer also confirmed that the workflow remains manual, least-privileged, protected by the `dev` environment, and incapable of targeting staging or production.
