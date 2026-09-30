@@ -4,22 +4,28 @@ This file is the batching point for actions that truly require the founder.
 
 ## Open
 
-### DISCORD-CREDENTIALS-001
-Action: Create or designate the DropRadar Discord application, accept Discord's developer terms if required, and provision its public key/bot credential through Hedy secret storage.
-
-Reason founder-only: application ownership, terms acceptance, and credentials cannot be fabricated or committed by the build agent.
-
-Needed after: the unsigned-request rejection and command behavior are locally verified; deployed Discord receipt and delivery require the real application identity.
-
 ### SOURCE-CREDENTIALS-001
-Action: If live eBay or Best Buy data is desired for founder review, create authorized provider applications and provision credentials through Hedy secret storage. Alternatively, supply exports obtained under an authorized account for the documented import paths.
+Action: Create/authorize the production data-provider accounts DropRadar will actually use, then provision their credentials through Hedy sealed secret storage.
 
-Reason founder-only: provider account ownership, terms acceptance, and credential creation.
+Current source decision:
+- eBay Browse API is a viable authorized listing/availability source but requires eBay developer credentials and OAuth.
+- Best Buy's official API exposes pricing/availability, but its current terms require attribution and limit caching of API content to 72 hours. Do not treat Best Buy API data as an unrestricted permanent historical-price feed.
 
-### HEDY-DEV-CREDENTIAL-001
-Action: Provision either a least-privilege `HEDY_TOKEN` in the protected GitHub `dev` environment or approve/configure Hedy CI/OIDC trust and set non-secret dev-environment variables `HEDY_COMPANY_ID`, `HEDY_CI_TRUST_ID`, and `HEDY_OIDC_AUDIENCE`. Ensure the selected self-hosted `linux` runner labeled `hedy` has the official Hedy CLI installed outside the repository.
+Reason founder-only: provider account ownership, terms acceptance, and credential creation cannot be delegated or fabricated.
 
-Reason founder-only: issuing a project credential or establishing workload-identity trust requires control-plane ownership. The repository workflow and dev-only sync wrapper are complete and do not store credentials. No staging or production credential is requested.
+### STAGING-DISCORD-001
+Action: When staging acceptance begins, provision the existing DropRadar Discord bot token and public key into Hedy staging through sealed provisioning, then update the Discord Developer Portal Interactions Endpoint URL from dev to the staging `/api/discord` endpoint for the staging acceptance window.
+
+Reason founder-only: staging secrets are environment-isolated and the Discord Developer Portal configuration is tied to the founder-owned application.
+
+Needed after: provider/compliance selection or when we intentionally begin staging E2E.
+
+### CI-RUNNER-001 — deferred, not blocking current build
+Action: Establish a hosted/always-on Hedy CLI execution path before relying on GitHub Actions for unattended deployments.
+
+Reason founder-only: CI workload identity / runner ownership is control-plane infrastructure.
+
+Current status: no self-hosted runner exists. This no longer blocks the current build because Hedy native revision copy moved the exact candidate and static file objects into main dev successfully. Keep the validated token/OIDC workflow, but do not depend on it operationally until a hosted runner path is established.
 
 Do not add routine product, architecture, debugging, framework, schema, staging, or reversible implementation decisions here.
 
@@ -35,8 +41,19 @@ Future entries are allowed only for:
 
 ## Closed
 
+### DISCORD-CREDENTIALS-001
+Result:
+- DropRadar Discord application created and installed in a test server.
+- Hedy dev received `DISCORD_BOT_TOKEN` and `DISCORD_PUBLIC_KEY` through sealed provisioning.
+- Discord verified the Hedy dev interaction endpoint.
+- `/watch`, `/unwatch`, and `/value` were registered and passed real Discord tests.
+- Main-dev scheduled alert generation and actual Discord DM delivery were proven end-to-end.
+
+### HEDY-DEV-CREDENTIAL-001
+Result: no founder dev credential or runner was required for the current validation path. Hedy native cross-project revision copy carried the exact Git-backed candidate plus static file objects into the main DropRadar project, and full dev runtime/Discord E2E passed. CI credential/runner setup remains deferred under `CI-RUNNER-001` rather than blocking the build.
+
 ### HEDY-CONNECTION-001
-Result: Authenticated control-plane access validated exact PR head `66fca2d` successfully, created an undeployed immutable revision, and produced isolated sandbox runtime evidence. Repository deployment now waits only on the scoped main-dev credential/OIDC action above.
+Result: authenticated control-plane access validated the exact candidate, preserved immutable Git-backed revisions, and produced both isolated-sandbox and main-project runtime evidence.
 
 ### HEDY-WORKSPACE-001
 Decision: PROJECTS team workspace.
