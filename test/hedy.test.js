@@ -22,3 +22,46 @@ test('delivery sandbox uses ctx.secrets.get and ctx.http.fetch with retry state'
 test('status-indexed queue drains beyond one page and CAS claim tokens fence stale workers',async()=>{const data=new MemoryHedyData();for(let i=0;i<201;i++){const status=i<100?'SENT':'PENDING',id=`a${i}:u`;await data.put(api.C.deliveries,id,{id,userId:'u',alert:{id:`a${i}`},status,attempts:0,updatedAt:'2026-01-01T00:00:00Z'});}let candidates=[];for(let run=0;run<3;run++){for(const candidate of await api.deliveryCandidates(data,new Date('2026-01-02T00:00:00Z'))){const claim=await api.claimDelivery(data,candidate,new Date('2026-01-02T00:00:00Z'));if(claim){candidates.push(claim.id);await api.settleDelivery(data,claim.id,claim.claimToken,'SENT',new Date('2026-01-02T00:00:01Z'));}}}assert.equal(new Set(candidates).size,101);const candidate={id:'lease:u',userId:'u',alert:{id:'lease'},status:'PENDING',attempts:0,updatedAt:'2026-01-01T00:00:00Z'};await data.put(api.C.deliveries,candidate.id,candidate);const first=await api.claimDelivery(data,candidate,new Date('2026-01-01T00:00:00Z'));const second=await api.claimDelivery(data,candidate,new Date('2026-01-01T00:02:00Z'));await api.settleDelivery(data,first.id,first.claimToken,'PENDING',new Date('2026-01-01T00:02:01Z'),new Error('late'));assert.equal((await data.get(api.C.deliveries,candidate.id)).claimToken,second.claimToken);});
 
 test('Discord sandbox verifies Ed25519 without undocumented runtime helpers',async()=>{const handler=loadHandler('discord.js'),data=new MemoryHedyData(),body=JSON.stringify({type:1}),timestamp=String(Math.floor(Date.now()/1000));const keys=tweetnacl.sign.keyPair.fromSeed(new Uint8Array(32).fill(7));const message=new TextEncoder().encode(timestamp+body),signature=tweetnacl.sign.detached(message,keys.secretKey);const hex=bytes=>[...bytes].map(value=>value.toString(16).padStart(2,'0')).join('');const request={method:'POST',body,headers:{'x-signature-ed25519':hex(signature),'x-signature-timestamp':timestamp}};const accepted=await handler(makeContext(data,{request,secrets:{DISCORD_PUBLIC_KEY:hex(keys.publicKey)}}));assert.equal(JSON.parse(accepted.body).type,1);request.headers['x-signature-ed25519']='00'.repeat(64);assert.equal((await handler(makeContext(data,{request,secrets:{DISCORD_PUBLIC_KEY:hex(keys.publicKey)}}))).status,401);});
+
+
+test('Pokémon sealed collector is watch-scoped and preserves provider provenance/currency', async () => {
+  const data = new MemoryHedyData();
+  const handler = loadHandler('collect-pokemontcg.js');
+  let calls = 0;
+  const idle = await handler(makeContext(data, {
+    secrets: { POKEMONTCG_API_KEY: 'test-key' },
+    httpFetch: async () => { calls++; throw new Error('should not call provider without watches'); }
+  }));
+  assert.equal(JSON.parse(idle.body).observations, 0);
+  assert.equal(calls, 0);
+
+  await api.watch(data, 'watcher', 'sv151-etb', new Date('2026-09-30T00:00:00Z'));
+  const responses = [
+    {
+      ok: true, status: 200,
+      json: async () => ({ data: [
+        { id: '151-elite-trainer-box', name: '151 Elite Trainer Box', kind: 'ETB', set_name: '151' },
+        { id: '151-pokemon-center-elite-trainer-box', name: '151 Pokemon Center Elite Trainer Box', kind: 'ETB', set_name: '151' }
+      ] })
+    },
+    {
+      ok: true, status: 200,
+      json: async () => ({ data: { quotes: [
+        { source: 'CARDMARKET', variant: 'MARKET', basis: 'ASKING', amount: 425.24, currency: 'EUR', locale: 'en', as_of: '2026-05-28', sample_n: 269, provenance: 'Cardmarket' }
+      ] }, meta: { delayed_hours: 0 } })
+    }
+  ];
+  const ctx = makeContext(data, {
+    secrets: { POKEMONTCG_API_KEY: 'test-key' },
+    httpFetch: async () => { calls++; return responses.shift(); }
+  });
+  const result = JSON.parse((await handler(ctx)).body);
+  assert.equal(result.status, 'HEALTHY');
+  assert.equal(result.observations, 1);
+  const current = await data.get(api.C.current, 'sv151-etb:pokemontcgapi-cardmarket');
+  assert.equal(current.currency, 'EUR');
+  assert.equal(current.evidence.provenance, 'Cardmarket');
+  assert.equal(current.evidence.basis, 'ASKING');
+  assert.equal(current.state, 'UNKNOWN');
+  assert.equal(calls, 2);
+});
