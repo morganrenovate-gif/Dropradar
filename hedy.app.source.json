@@ -175,10 +175,10 @@
       "path": "/app.js",
       "sourcePath": "static/app.js",
       "contentType": "text/javascript",
-      "sizeBytes": 2421,
-      "sha256": "e31dc5018ec8e9bf05921ecd7814a37cb04294fa859b116c4608535310e2682b",
+      "sizeBytes": 2653,
+      "sha256": "d0da2f2d6ff2a979bb39803acd92fdc2391126c6b8acd46e3112c50542e09906",
       "visibility": "Public",
-      "cachePolicy": "Immutable"
+      "cachePolicy": "RevisionAware"
     }
   ],
   "modules": [
@@ -259,7 +259,7 @@
     {
       "name": "collect-pokemontcg",
       "functionName": "collect-pokemontcg",
-      "cronExpression": "17 */6 * * *",
+      "cronExpression": "17 18 * * *",
       "timeZone": "UTC",
       "kind": "recurring",
       "enabled": false
