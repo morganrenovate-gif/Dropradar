@@ -11,7 +11,7 @@ No adapter may scrape a consumer storefront, bypass a bot challenge, rotate iden
 
 ## MVP source plan (three compliant, secret-free substitutes)
 
-The three MVP lanes below can run locally and in staging without a provider secret. They are **compliant substitutes**, not claims that a retailer has granted live API access. Each accepted record must carry `source`, `source_item_id`, `observed_at`, `source_url`, `evidence_kind`, and adapter version.
+The three import lanes below can run locally and in staging without a provider secret; a separate live sealed market-data lane is documented below. They are **compliant substitutes**, not claims that a retailer has granted live API access. Each accepted record must carry `source`, `source_item_id`, `observed_at`, `source_url`, `evidence_kind`, and adapter version.
 
 | Source key | Secret-free MVP input | Permitted use and guardrail | Upgrade path |
 |---|---|---|---|
@@ -54,9 +54,27 @@ Best Buy's documented Products API requires an API key. Its documentation descri
 
 Constraints: use only a provider-issued key kept in runtime secret storage; honor provider responses and quota guidance; never scrape the consumer storefront as a fallback. Without a key, use an explicitly authorized timestamped import and mark availability `UNKNOWN` when the import supplies no unambiguous status.
 
-## Optional metadata enrichment (not one of the three retail lanes)
+## Active sealed market-data lane: pokemontcgapi.com
 
-The community [Pokémon TCG API](https://docs.pokemontcg.io/) can enrich card/set metadata but is not an authoritative sealed-product inventory feed. Its [authentication documentation](https://docs.pokemontcg.io/getting-started/authentication/) permits requests without an API key at a lower limit, and its [rate-limit documentation](https://docs.pokemontcg.io/getting-started/rate-limits/) defines the current anonymous and authenticated quotas. An implementation must read and respect returned rate-limit headers rather than hard-code a remembered quota. It must not convert card-market fields into sealed-product retail observations.
+DropRadar dev now has a sealed-product market-price adapter for [pokemontcgapi.com](https://pokemontcgapi.com/). This is a third-party market-data provider, not The Pokémon Company and not a retailer inventory source.
+
+- Authentication: server-side `X-Api-Key` stored only in Hedy secret storage.
+- API host: `api.pokemontcgapi.com`.
+- Catalogue endpoint: `GET /v1/sealed` for fail-closed product mapping.
+- Price endpoint: `GET /v1/sealed/{id}/prices`.
+- Every accepted price row must retain `source`, `basis`, `as_of`, `provenance`, currency, sample count when present, provider product id/name, and adapter version.
+- User-facing web and Discord surfaces display the upstream `provenance` string and the returned currency. No EUR value may be formatted as USD.
+- Price rows are market observations/asking or guide values only. They do not establish retailer stock and must remain `UNKNOWN` inventory state.
+- The adapter is watch-scoped. It polls only products that at least one DropRadar user watches and caches strong product mappings.
+- Dev cadence is once daily because sealed prices are delayed market observations and the trial is credit-bounded; high-frequency polling would add cost without adding equivalent freshness.
+
+Provider terms reviewed 2026-09-30:
+- [Terms of service](https://pokemontcgapi.com/legal/terms): commercial use inside a product is allowed; raw price observations may not be redistributed as a dataset/feed/dump/mirror or resold as a competing price API.
+- [Price object / attribution](https://pokemontcgapi.com/docs/objects/price): provenance is required wherever a price is displayed.
+- [Sealed price endpoint](https://pokemontcgapi.com/docs/api/prices/current-sealed): current sealed-product quote route and source/basis/date shape.
+- [Pricing](https://pokemontcgapi.com/pricing): the trial is credit-bounded; production scale requires selecting a plan that matches actual watch volume.
+
+Constraint: this lane supplies market value evidence, not inventory availability. DropRadar must continue to pursue separate authorized retailer/API lanes for restock alerts.
 
 ## Runtime enforcement checklist
 
