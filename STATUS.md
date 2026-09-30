@@ -44,7 +44,8 @@ The sandbox deliberately omitted Discord route/delivery because founder-owned Di
 - `npm run check:hedy`: PASS.
 - `npm run check`: PASS.
 - `npm audit --omit=dev`: zero known vulnerabilities.
-- Independent prior runtime/manifest QA: no open Critical/High findings.
+- GitHub Actions push and pull-request checks: PASS for dev-sync implementation commit `af9dea8`.
+- Independent dev-sync QA: PASS with no open Critical/High/Medium findings.
 
 ## Remaining gates
 
