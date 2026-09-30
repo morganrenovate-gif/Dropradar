@@ -16,13 +16,15 @@
     "localMachineAgentServices": [],
     "outboundHttp": {
       "allowedHosts": [
-        "discord.com"
+        "discord.com",
+        "api.pokemontcgapi.com"
       ]
     }
   },
   "requiredSecrets": [
     "DISCORD_PUBLIC_KEY",
-    "DISCORD_BOT_TOKEN"
+    "DISCORD_BOT_TOKEN",
+    "POKEMONTCG_API_KEY"
   ],
   "environment": [],
   "dataCollections": [
@@ -117,6 +119,10 @@
           "sortField": "at"
         }
       ]
+    },
+    {
+      "name": "source_mappings",
+      "indexes": []
     }
   ],
   "runtimeWritablePaths": [],
@@ -226,6 +232,13 @@
       "modules": [
         "dropradar"
       ]
+    },
+    {
+      "name": "collect-pokemontcg",
+      "sourcePath": "hedy/functions/collect-pokemontcg.js",
+      "modules": [
+        "dropradar"
+      ]
     }
   ],
   "schedules": [
@@ -242,6 +255,14 @@
       "cronExpression": "* * * * *",
       "timeZone": "UTC",
       "kind": "recurring"
+    },
+    {
+      "name": "collect-pokemontcg",
+      "functionName": "collect-pokemontcg",
+      "cronExpression": "17 */6 * * *",
+      "timeZone": "UTC",
+      "kind": "recurring",
+      "enabled": false
     }
   ],
   "inboundWebhooks": []
