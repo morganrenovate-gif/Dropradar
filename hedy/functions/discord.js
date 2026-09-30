@@ -23,7 +23,7 @@ async function handler(ctx) {
       const product = matches[0];
       if (name === 'watch') { await api.watch(ctx.data, userId, product.id); response = { type: 4, data: { flags: 64, content: `Watching ${product.name}.` } }; }
       else if (name === 'unwatch') { await api.unwatch(ctx.data, userId, product.id); response = { type: 4, data: { flags: 64, content: `No longer watching ${product.name}.` } }; }
-      else if (name === 'value') { const view = await api.productView(ctx.data, product); const lines = view.current.length ? view.current.map(o => `${o.source}: ${o.price == null ? 'price unavailable' : `$${o.price.toFixed(2)} ${o.currency}`} (${o.state}, observed ${o.observedAt})`) : ['No current source observations.']; response = { type: 4, data: { content: `**${product.name}**\n${lines.join('\n')}\nObserved offers are asking prices, not completed sales.` } }; }
+      else if (name === 'value') { const view = await api.productView(ctx.data, product); const lines = view.current.length ? view.current.map(o => `${o.evidence?.provenance || o.source}: ${o.price == null ? 'price unavailable' : `${Number(o.price).toFixed(2)} ${o.currency || 'USD'}`} (${o.state}, observed ${o.observedAt})`) : ['No current source observations.']; response = { type: 4, data: { content: `**${product.name}**\n${lines.join('\n')}\nObserved offers are asking prices, not completed sales.` } }; }
       else response = { type: 4, data: { flags: 64, content: 'Unsupported command.' } };
     }
     return { status: 200, headers: { 'content-type': 'application/json' }, body: JSON.stringify(response) };
