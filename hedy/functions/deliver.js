@@ -14,7 +14,7 @@ async function handler(ctx) {
       const channel = await channelResponse.json();
       const observation = claim.alert.observation;
       const price = observation.price == null ? 'price unavailable' : `$${observation.price.toFixed(2)} ${observation.currency}`;
-      const content = `DropRadar alert: ${claim.alert.productId}\n${observation.source}: ${price} (${observation.state})\nObserved ${observation.observedAt}. Offer/asking price, not a completed sale.`;
+      const sourceLabel = observation.evidence?.provenance || observation.source;\n      const content = `DropRadar alert: ${claim.alert.productId}\n${sourceLabel}: ${price} (${observation.state})\nObserved ${observation.observedAt}. Offer/asking price, not a completed sale.`;
       const messageResponse = await ctx.http.fetch(`https://discord.com/api/v10/channels/${encodeURIComponent(channel.id)}/messages`, { method: 'POST', headers, body: JSON.stringify({ content, allowed_mentions: { parse: [] } }) });
       if (!messageResponse.ok) throw new Error(`Discord message request failed (${messageResponse.status})`);
       await api.settleDelivery(ctx.data, claim.id, claim.claimToken, 'SENT', new Date()); result.sent++;
