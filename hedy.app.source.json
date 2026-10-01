@@ -123,6 +123,10 @@
     {
       "name": "source_mappings",
       "indexes": []
+    },
+    {
+      "name": "retailer_links",
+      "indexes": []
     }
   ],
   "runtimeWritablePaths": [],
@@ -150,6 +154,20 @@
       "path": "/api/discord",
       "kind": "Function",
       "target": "discord-webhook"
+    },
+    {
+      "method": "POST",
+      "path": "/api/growth",
+      "kind": "Function",
+      "target": "growth-tracker",
+      "rateLimitPerMinute": 120
+    },
+    {
+      "method": "GET",
+      "path": "/go/:retailer/:product",
+      "kind": "Function",
+      "target": "retailer-redirect",
+      "rateLimitPerMinute": 60
     }
   ],
   "files": [
@@ -175,8 +193,8 @@
       "path": "/app.js",
       "sourcePath": "static/app.js",
       "contentType": "text/javascript",
-      "sizeBytes": 2653,
-      "sha256": "d0da2f2d6ff2a979bb39803acd92fdc2391126c6b8acd46e3112c50542e09906",
+      "sizeBytes": 3154,
+      "sha256": "9858f4e11a10f0fe2fbea816c456ded19956ec8f5350fc27e8de8cf879eb184e",
       "visibility": "Public",
       "cachePolicy": "RevisionAware"
     }
@@ -236,6 +254,18 @@
     {
       "name": "collect-pokemontcg",
       "sourcePath": "hedy/functions/collect-pokemontcg.js",
+      "modules": [
+        "dropradar"
+      ]
+    },
+    {
+      "name": "growth-tracker",
+      "sourcePath": "hedy/functions/track-growth.js",
+      "modules": []
+    },
+    {
+      "name": "retailer-redirect",
+      "sourcePath": "hedy/functions/retailer-redirect.js",
       "modules": [
         "dropradar"
       ]
