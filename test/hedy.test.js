@@ -65,3 +65,46 @@ test('Pokémon sealed collector is watch-scoped and preserves provider provenanc
   assert.equal(current.state, 'UNKNOWN');
   assert.equal(calls, 2);
 });
+
+
+test('growth tracker allowlists event names and bounds properties', async () => {
+  const data = new MemoryHedyData();
+  const events = [];
+  const handler = loadHandler('track-growth.js');
+  const response = await handler(makeContext(data, {
+    request: { method: 'POST', body: JSON.stringify({ event: 'search', query: 'x'.repeat(200), path: '/products' }) },
+    trackEvent: async (name, properties) => events.push({ name, properties })
+  }));
+  assert.equal(response.status, 204);
+  assert.equal(events.length, 1);
+  assert.equal(events[0].name, 'growth_search');
+  assert.equal(events[0].properties.query.length, 80);
+  const bad = await handler(makeContext(data, {
+    request: { method: 'POST', body: JSON.stringify({ event: 'purchase' }) },
+    trackEvent: async () => { throw new Error('must not track unsupported event'); }
+  }));
+  assert.equal(bad.status, 400);
+});
+
+test('retailer redirect fails closed and tracks only allowlisted retailer hosts', async () => {
+  const data = new MemoryHedyData();
+  const handler = loadHandler('retailer-redirect.js');
+  const events = [];
+  const request = { method: 'GET', params: { retailer: 'walmart', product: 'sv151-etb' } };
+
+  const missing = await handler(makeContext(data, { request, trackEvent: async () => {} }));
+  assert.equal(missing.status, 404);
+
+  await data.put('retailer_links', 'walmart:sv151-etb', { status: 'ACTIVE', url: 'https://evil.example/item', affiliateEnabled: true });
+  const rejected = await handler(makeContext(data, { request, trackEvent: async () => {} }));
+  assert.equal(rejected.status, 400);
+
+  await data.put('retailer_links', 'walmart:sv151-etb', { status: 'ACTIVE', url: 'https://www.walmart.com/ip/123', affiliateEnabled: false, program: 'organic' });
+  const accepted = await handler(makeContext(data, { request, trackEvent: async (name, properties) => events.push({ name, properties }) }));
+  assert.equal(accepted.status, 302);
+  assert.equal(accepted.headers.location, 'https://www.walmart.com/ip/123');
+  assert.equal(events.length, 1);
+  assert.equal(events[0].name, 'growth_retailer_click');
+  assert.equal(events[0].properties.productId, 'sv151-etb');
+  assert.equal(events[0].properties.retailer, 'walmart');
+});
