@@ -13,6 +13,7 @@ test('source manifest uses authoritative Hedy identifiers, routes, schedules, mo
   assert.ok(source.capabilities.outboundHttp.allowedHosts.includes('discord.com'));
   assert.ok(source.capabilities.outboundHttp.allowedHosts.includes('api.pokemontcgapi.com'));
   assert.ok(source.dataCollections.some(collection => collection.name === 'source_mappings'));
+  assert.ok(source.dataCollections.some(collection => collection.name === 'retailer_links'));
   for (const collection of source.dataCollections) {
     assert.ok(collection.indexes.length <= 4);
     for (const index of collection.indexes) {
@@ -23,7 +24,7 @@ test('source manifest uses authoritative Hedy identifiers, routes, schedules, mo
   }
   for (const route of source.routes) { assert.equal(route.kind, 'Function'); assert.equal(typeof route.target, 'string'); assert.equal('function' in route, false); }
   for (const schedule of source.schedules) { assert.equal(schedule.kind, 'recurring'); assert.equal(typeof schedule.functionName, 'string'); assert.equal(schedule.timeZone, 'UTC'); }
-  const expectedModules = { health: [], products: ['dropradar'], 'product-detail': ['dropradar'], 'discord-webhook': ['dropradar', 'tweetnacl'], 'collect-authorized-imports': ['dropradar'], 'deliver-alerts': ['dropradar'], 'collect-pokemontcg': ['dropradar'] };
+  const expectedModules = { health: [], products: ['dropradar'], 'product-detail': ['dropradar'], 'discord-webhook': ['dropradar', 'tweetnacl'], 'collect-authorized-imports': ['dropradar'], 'deliver-alerts': ['dropradar'], 'collect-pokemontcg': ['dropradar'], 'growth-tracker': [], 'retailer-redirect': ['dropradar'] };
   for (const fn of source.functions) assert.deepEqual(fn.modules, expectedModules[fn.name]);
 });
 
