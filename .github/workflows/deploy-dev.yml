@@ -1,0 +1,34 @@
+name: Deploy Hedy Dev
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: hedy-dev
+  cancel-in-progress: false
+
+jobs:
+  sync-dev:
+    name: Stage files and sync dev
+    environment: dev
+    runs-on: [self-hosted, linux, hedy]
+    env:
+      HEDY_TOKEN: ${{ secrets.HEDY_TOKEN }}
+      HEDY_COMPANY_ID: ${{ vars.HEDY_COMPANY_ID }}
+      HEDY_CI_TRUST_ID: ${{ vars.HEDY_CI_TRUST_ID }}
+      HEDY_OIDC_AUDIENCE: ${{ vars.HEDY_OIDC_AUDIENCE }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run check
+      - name: Hedy CLI stage and sync (dev only)
+        run: ./scripts/sync-hedy-dev.sh

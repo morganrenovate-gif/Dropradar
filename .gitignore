@@ -1,6 +1,8 @@
 .DS_Store
 .env
 .env.*
+var/
+imports/
 node_modules/
 dist/
 playwright-report/

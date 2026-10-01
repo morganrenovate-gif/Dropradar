@@ -1,33 +1,4 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="DropRadar collectible product intelligence">
-  <title>DropRadar</title>
-  <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-  <main class="shell">
-    <header class="topbar">
-      <div class="brand">DropRadar</div>
-      <div class="status">MVP BUILD</div>
-    </header>
-    <section class="hero">
-      <p class="eyebrow">COLLECTIBLE PRODUCT INTELLIGENCE</p>
-      <h1>Know when it drops. Know what the evidence says.</h1>
-      <p class="lede">DropRadar is building source-attributed availability, price history, watchlists, and alerts for high-demand collectibles, starting with Pokemon TCG.</p>
-      <div class="actions">
-        <button type="button" disabled>Watchlists coming online</button>
-        <span>Autonomous build in progress</span>
-      </div>
-    </section>
-    <section class="grid" aria-label="MVP status">
-      <article><strong>Products</strong><span>Canonical catalog</span></article>
-      <article><strong>Sources</strong><span>Permitted data feeds</span></article>
-      <article><strong>History</strong><span>Timestamped observations</span></article>
-      <article><strong>Alerts</strong><span>Discord + watchlists</span></article>
-    </section>
-  </main>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Source-attributed Pokemon TCG product availability and prices"><title>DropRadar — Pokémon product intelligence</title><link rel="stylesheet" href="/styles.css"></head><body>
+<header class="topbar"><a class="brand" href="/">DropRadar</a><span class="status">EVIDENCE, NOT HYPE</span></header>
+<main><section class="hero"><p class="eyebrow">POKÉMON TCG PRODUCT INTELLIGENCE</p><h1>Know what dropped.<br><em>Know the source.</em></h1><p>Browse source-attributed availability and observed offer prices. We keep history and never label asking prices as completed sales.</p><label for="search">Search 30 tracked products</label><input id="search" type="search" placeholder="Try 151, Surging Sparks…" autocomplete="off"></section><section id="products" class="products" aria-live="polite"></section></main>
+<dialog id="detail"></dialog><footer>DropRadar · Observations include timestamps and provenance · Availability can change</footer><script type="module" src="/app.js"></script></body></html>

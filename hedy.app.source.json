@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 2,
+  "name": "DropRadar",
+  "projectSlug": "dropradar",
+  "sourceVersion": "V2",
+  "capabilities": {
+    "auth": false,
+    "push": false,
+    "realtime": false,
+    "askAi": {
+      "enabled": false,
+      "allowedModels": [],
+      "allowStreaming": true,
+      "allowImages": true
+    },
+    "localMachineAgentServices": [],
+    "outboundHttp": {
+      "allowedHosts": [
+        "discord.com",
+        "api.pokemontcgapi.com"
+      ]
+    }
+  },
+  "requiredSecrets": [
+    "DISCORD_PUBLIC_KEY",
+    "DISCORD_BOT_TOKEN",
+    "POKEMONTCG_API_KEY"
+  ],
+  "environment": [],
+  "dataCollections": [
+    {
+      "name": "authorized_source_imports",
+      "indexes": [
+        {
+          "name": "by-source",
+          "field": "source",
+          "sortField": "observedAt"
+        }
+      ]
+    },
+    {
+      "name": "observations",
+      "indexes": [
+        {
+          "name": "by-product",
+          "field": "productId",
+          "sortField": "observedAt"
+        }
+      ]
+    },
+    {
+      "name": "current_observations",
+      "indexes": [
+        {
+          "name": "by-product",
+          "field": "productId"
+        }
+      ]
+    },
+    {
+      "name": "watches",
+      "indexes": [
+        {
+          "name": "by-product",
+          "field": "productId",
+          "sortField": "createdAt"
+        },
+        {
+          "name": "by-user",
+          "field": "userId",
+          "sortField": "createdAt"
+        }
+      ]
+    },
+    {
+      "name": "alert_events",
+      "indexes": [
+        {
+          "name": "by-product",
+          "field": "productId",
+          "sortField": "createdAt"
+        }
+      ]
+    },
+    {
+      "name": "alert_deliveries",
+      "indexes": [
+        {
+          "name": "by-status-updated",
+          "field": "status",
+          "sortField": "updatedAt"
+        },
+        {
+          "name": "by-status-lease",
+          "field": "status",
+          "sortField": "leaseUntil"
+        },
+        {
+          "name": "by-alert",
+          "field": "alertId"
+        },
+        {
+          "name": "by-user",
+          "field": "userId",
+          "sortField": "updatedAt"
+        }
+      ]
+    },
+    {
+      "name": "source_health",
+      "indexes": []
+    },
+    {
+      "name": "audit_events",
+      "indexes": [
+        {
+          "name": "by-source",
+          "field": "source",
+          "sortField": "at"
+        }
+      ]
+    },
+    {
+      "name": "source_mappings",
+      "indexes": []
+    },
+    {
+      "name": "retailer_links",
+      "indexes": []
+    }
+  ],
+  "runtimeWritablePaths": [],
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "kind": "Function",
+      "target": "health"
+    },
+    {
+      "method": "GET",
+      "path": "/api/products",
+      "kind": "Function",
+      "target": "products"
+    },
+    {
+      "method": "GET",
+      "path": "/api/products/:id",
+      "kind": "Function",
+      "target": "product-detail"
+    },
+    {
+      "method": "POST",
+      "path": "/api/discord",
+      "kind": "Function",
+      "target": "discord-webhook"
+    },
+    {
+      "method": "POST",
+      "path": "/api/growth",
+      "kind": "Function",
+      "target": "growth-tracker",
+      "rateLimitPerMinute": 120
+    },
+    {
+      "method": "GET",
+      "path": "/go/:retailer/:product",
+      "kind": "Function",
+      "target": "retailer-redirect",
+      "rateLimitPerMinute": 60
+    }
+  ],
+  "files": [
+    {
+      "path": "/index.html",
+      "sourcePath": "static/index.html",
+      "contentType": "text/html",
+      "sizeBytes": 1158,
+      "sha256": "d3e4b0bf3f56b8d3aa5077c0ab56c5fc18977d618dca042347eb944c800c1fb4",
+      "visibility": "Public",
+      "cachePolicy": "ShortLived"
+    },
+    {
+      "path": "/styles.css",
+      "sourcePath": "static/styles.css",
+      "contentType": "text/css",
+      "sizeBytes": 2507,
+      "sha256": "0f220211f9f1384b4b6f3b53c1a1be7e75cd3cf462102dc5cd03e3d3f88cb5d2",
+      "visibility": "Public",
+      "cachePolicy": "Immutable"
+    },
+    {
+      "path": "/app.js",
+      "sourcePath": "static/app.js",
+      "contentType": "text/javascript",
+      "sizeBytes": 3154,
+      "sha256": "9858f4e11a10f0fe2fbea816c456ded19956ec8f5350fc27e8de8cf879eb184e",
+      "visibility": "Public",
+      "cachePolicy": "RevisionAware"
+    }
+  ],
+  "modules": [
+    {
+      "name": "dropradar",
+      "sourcePath": "hedy/modules/dropradar.cjs"
+    },
+    {
+      "name": "tweetnacl",
+      "sourcePath": "hedy/modules/tweetnacl.cjs"
+    }
+  ],
+  "functions": [
+    {
+      "name": "health",
+      "sourcePath": "hedy/functions/health.js",
+      "modules": []
+    },
+    {
+      "name": "products",
+      "sourcePath": "hedy/functions/products.js",
+      "modules": [
+        "dropradar"
+      ]
+    },
+    {
+      "name": "product-detail",
+      "sourcePath": "hedy/functions/product-detail.js",
+      "modules": [
+        "dropradar"
+      ]
+    },
+    {
+      "name": "discord-webhook",
+      "sourcePath": "hedy/functions/discord.js",
+      "modules": [
+        "dropradar",
+        "tweetnacl"
+      ]
+    },
+    {
+      "name": "collect-authorized-imports",
+      "sourcePath": "hedy/functions/collect.js",
+      "modules": [
+        "dropradar"
+      ]
+    },
+    {
+      "name": "deliver-alerts",
+      "sourcePath": "hedy/functions/deliver.js",
+      "modules": [
+        "dropradar"
+      ]
+    },
+    {
+      "name": "collect-pokemontcg",
+      "sourcePath": "hedy/functions/collect-pokemontcg.js",
+      "modules": [
+        "dropradar"
+      ]
+    },
+    {
+      "name": "growth-tracker",
+      "sourcePath": "hedy/functions/track-growth.js",
+      "modules": []
+    },
+    {
+      "name": "retailer-redirect",
+      "sourcePath": "hedy/functions/retailer-redirect.js",
+      "modules": [
+        "dropradar"
+      ]
+    }
+  ],
+  "schedules": [
+    {
+      "name": "collect-authorized-imports",
+      "functionName": "collect-authorized-imports",
+      "cronExpression": "*/5 * * * *",
+      "timeZone": "UTC",
+      "kind": "recurring"
+    },
+    {
+      "name": "deliver-alerts",
+      "functionName": "deliver-alerts",
+      "cronExpression": "* * * * *",
+      "timeZone": "UTC",
+      "kind": "recurring"
+    },
+    {
+      "name": "collect-pokemontcg",
+      "functionName": "collect-pokemontcg",
+      "cronExpression": "17 18 * * *",
+      "timeZone": "UTC",
+      "kind": "recurring",
+      "enabled": false
+    }
+  ],
+  "inboundWebhooks": []
+}

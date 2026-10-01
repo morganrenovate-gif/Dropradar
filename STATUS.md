@@ -1,63 +1,56 @@
 # DropRadar Status
 
 ## Phase
-AUTONOMOUS BUILD BOOTSTRAP
+MAIN DEV LIVE MARKET-DATA + DISCORD E2E PASS — STAGING / RETAILER-INVENTORY GATES PENDING
 
 ## Current objective
-Finish the GitHub + Hedy control plane and hand off implementation work to an autonomous coding runtime.
+Keep dev operational with the real sealed-product market-data lane and Discord alerts, then add at least one authorized retailer inventory source and move the verified candidate into staging. Production remains untouched and founder-controlled.
 
-## Acceptance progress
-Bootstrap infrastructure established. Product acceptance work has not yet begun.
+## Main dev evidence
+- Discord endpoint verification and real `/watch`, `/value`, `/unwatch` commands: PASS.
+- Real Discord alert delivery: PASS.
+- Live `pokemontcgapi.com` sealed-product request: PASS.
+- Provider source health: `HEALTHY`.
+- Strong product mapping proved for 151 Elite Trainer Box and Surging Sparks Elite Trainer Box.
+- Real market quotes persist with provider provenance, basis, observation date, sample count, and currency.
+- Inventory state remains `UNKNOWN`; market price observations are not represented as retailer stock.
+- Validation-only watch rows were removed after testing.
+- `collect-pokemontcg` runs once daily at 18:17 UTC.
+- `deliver-alerts` is enabled every minute.
+- Legacy import collector remains disabled.
+
+## Display/compliance repair
+The first live provider proof returned EUR Cardmarket data and exposed that the old frontend formatted every price as USD. The dev frontend is now currency-aware and displays the upstream provenance string. Discord value and alert output also use provider provenance and explicit currency.
+
+Served dev `/app.js` SHA-256:
+`d0da2f2d6ff2a979bb39803acd92fdc2391126c6b8acd46e3112c50542e09906`.
+
+## Active Hedy dev
+- Revision: `apprev_1790793614115_97bb494d24e84426bc9ee88ef9f5e3d9`
+- Host: `dropradar--morgan-projects--dev.apps.hedyassist.com`
+- Staging: unchanged from bootstrap.
+- Production: Draft / untouched.
+
+## Remaining gates
+1. Add an authorized retailer-inventory source. Best Buy access is pending provider approval; do not scrape consumer storefronts as a fallback.
+2. Provision the required app credentials into staging through sealed provisioning.
+3. Promote the verified candidate to staging; rerun UI/API/Discord/live-source E2E and rollback/restore.
+4. Establish an always-on hosted Hedy CLI path before depending on GitHub Actions for unattended deployments.
+5. Production promotion remains an explicit founder-controlled action.
 
 ## GitHub
-- Repository: morganrenovate-gif/Dropradar
-- Default branch: main
-- Project contracts committed
-- Hedy manifest baseline committed
-- Minimal deployable web shell committed
-- GitHub remains source of truth
+- Repository: `morganrenovate-gif/Dropradar`
+- Branch: `work`
+- Pull request: https://github.com/morganrenovate-gif/Dropradar/pull/1 (draft)
 
-## Hedy
-- Workspace: PROJECTS
-- Project: DropRadar
-- Project ID: proj_6e72d39b4f9a4f259ef00528c5b92b57
-- Workspace slug: morgan-projects
-- Production host: dropradar--morgan-projects.apps.hedyassist.com
-- Dev host: dropradar--morgan-projects--dev.apps.hedyassist.com
-- Staging host: dropradar--morgan-projects--staging.apps.hedyassist.com
-- Production lifecycle status: Draft
-- dev environment: created and bootstrap revision deployed
-- staging environment: created and bootstrap revision promoted
-- production: not released
 
-## Bootstrap revision
-- Revision: apprev_1790725428809_406a941768d948c0a365a390c5588c84
-- Source: GitHub main
-- Source commit at revision creation: 52bd9b7eacb5552fce7198fd61745ace0df740d5
-- Dev deployment: PASS
-- Staging promotion: PASS
-- Dev GET / synthetic smoke test: 200 PASS
-- Staging GET / synthetic smoke test: 200 PASS
-
-## Hedy project operations
-- Routine human checkpoint workflow disabled.
-- Routine customer-question workflow disabled.
-- Build Board created at hedy://app/build-board.
-- 23 implementation / QA / release tasks loaded.
-- MVP scope record created.
-
-## Current blocker to true unattended development
-A persistent autonomous coding runtime still needs authority to:
-- read this repo;
-- create branches / commits / pull requests;
-- execute tests in a real development environment;
-- inspect CI;
-- sync/promote passing revisions into Hedy dev/staging;
-- continue running without an active chat session.
-
-Hedy is now prepared to be the runtime/control plane, but GitHub + Hedy alone do not create a continuously running coding agent.
-
-## Founder action required
-None for the current bootstrap work.
-
-A founder-only action should be requested later only if CI/deployer credentials, Discord credentials, retailer credentials, identity verification, legal acceptance, spend, or production release genuinely require it.
+## Autonomous growth workforce
+- `GROWTH_WORKFORCE.md` defines Growth Director, Content, SEO, Community, Affiliate Revenue, Retailer Intelligence, Analytics, Monetization, and independent Growth QA roles.
+- `GROWTH_BACKLOG.md` is the parallel execution contract for acquisition/revenue work.
+- Hedy page `hedy://app/growth-revenue` is the live growth board.
+- GitHub issues #2-#6 are the first bounded work packets.
+- G0 instrumentation/retailer-redirect foundation is IN PROGRESS.
+- Implementation CI passed at `3773dad2e682dcd7cf0c3b5c27ecbc67c9ff7a34`.
+- Dev revision `apprev_1790854739167_b09539e2b5e843e89b520bc9ce36c092` contains bounded growth tracking plus the fail-closed retailer redirect framework.
+- No affiliate program is represented as approved and no paid acquisition is enabled.
+- Staging and production remain unchanged.
