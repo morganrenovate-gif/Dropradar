@@ -32,8 +32,8 @@ export class MemoryHedyData {
   async batchDelete(name,keys){ return Promise.all(keys.map(key=>this.delete(name,key))); }
 }
 
-export function makeContext(data,{request={},secrets={},httpFetch=async()=>({ok:true,status:200,json:async()=>({id:'channel'})})}={}){
-  return { data, modules:{dropradar:api,tweetnacl}, request:{method:'GET',headers:{},query:{},params:{},body:'',...request}, secrets:{get:async name=>secrets[name]}, http:{fetch:httpFetch} };
+export function makeContext(data,{request={},secrets={},httpFetch=async()=>({ok:true,status:200,json:async()=>({id:'channel'})}),trackEvent=async()=>{}}={}){
+  return { data, modules:{dropradar:api,tweetnacl}, request:{method:'GET',headers:{},query:{},params:{},body:'',...request}, secrets:{get:async name=>secrets[name]}, http:{fetch:httpFetch}, track:trackEvent };
 }
 
 export function loadHandler(relativePath){ const source=fs.readFileSync(new URL(`../hedy/functions/${relativePath}`,import.meta.url),'utf8'); const sandbox={console,Date,JSON,Math,Uint8Array,parseInt,encodeURIComponent,Promise}; vm.createContext(sandbox); vm.runInContext(`${source}\n;globalThis.__handler=handler;`,sandbox,{filename:relativePath}); return sandbox.__handler; }
