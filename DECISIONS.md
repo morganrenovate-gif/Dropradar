@@ -58,3 +58,13 @@ Maintain `hedy.app.source.json` as the reviewable source-path manifest and gener
 Status: Accepted
 
 Use the official `hedy app sync --environment dev` path for main-project dev deployment because it stages static file bytes in Hedy's content-addressed object store before revision sync. The repository wrapper and manual GitHub workflow are dev-only. Authentication is supplied outside source through a scoped `HEDY_TOKEN` or an explicit `hedy login --ci` using company, CI trust policy, and audience configuration; staging and production remain promotion-only.
+
+
+## D-012 — Autonomous growth and revenue division
+Status: Accepted
+
+Operate growth as a governed peer division to engineering rather than as ad hoc founder work.
+
+The Growth Director owns acquisition, community, affiliate revenue, analytics, content, and monetization experiments through `GROWTH_WORKFORCE.md` and `GROWTH_BACKLOG.md`.
+
+Optimize the measurable funnel from qualified discovery to watch/useful alert/retailer click/repeat use rather than raw followers or Discord member count. Paid spend remains founder-controlled; provider terms, identity, credentials, production, and irreversible external actions remain founder gates.
