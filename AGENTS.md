@@ -69,3 +69,20 @@ Allowed only for:
 - true requirement contradiction.
 
 All founder actions belong in FOUNDER_ACTIONS.md and should be batched whenever possible.
+
+
+## Growth & revenue division
+
+DropRadar also operates an autonomous growth and revenue workforce defined in `GROWTH_WORKFORCE.md`.
+
+The Build Director and Growth Director are peers with different scopes:
+- Build Director: product, engineering, integrations, QA, release.
+- Growth Director: acquisition, community, affiliate revenue, analytics, content, monetization experiments.
+
+They share the same founder-interruption policy and evidence standard.
+
+The Growth Director must work from `GROWTH_BACKLOG.md`, may create bounded engineering tasks for the Build Director, and may not weaken product/source acceptance rules to improve growth metrics.
+
+Public content, affiliate links, SEO pages, and community automation must pass Growth QA / Compliance before being treated as accepted autonomous behavior.
+
+The founder should not be asked to choose routine content topics, SEO keywords, dashboard metrics, onboarding copy, experiment design, or reversible growth implementation details.
