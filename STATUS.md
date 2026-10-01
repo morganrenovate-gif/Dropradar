@@ -42,3 +42,15 @@ Served dev `/app.js` SHA-256:
 - Repository: `morganrenovate-gif/Dropradar`
 - Branch: `work`
 - Pull request: https://github.com/morganrenovate-gif/Dropradar/pull/1 (draft)
+
+
+## Autonomous growth workforce
+- `GROWTH_WORKFORCE.md` defines Growth Director, Content, SEO, Community, Affiliate Revenue, Retailer Intelligence, Analytics, Monetization, and independent Growth QA roles.
+- `GROWTH_BACKLOG.md` is the parallel execution contract for acquisition/revenue work.
+- Hedy page `hedy://app/growth-revenue` is the live growth board.
+- GitHub issues #2-#6 are the first bounded work packets.
+- G0 instrumentation/retailer-redirect foundation is IN PROGRESS.
+- Implementation CI passed at `3773dad2e682dcd7cf0c3b5c27ecbc67c9ff7a34`.
+- Dev revision `apprev_1790854739167_b09539e2b5e843e89b520bc9ce36c092` contains bounded growth tracking plus the fail-closed retailer redirect framework.
+- No affiliate program is represented as approved and no paid acquisition is enabled.
+- Staging and production remain unchanged.
